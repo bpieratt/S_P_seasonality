@@ -1,0 +1,67 @@
+# OUT-OF-SAMPLE VALIDATION CRITERIA — pre-registered BEFORE any 2023+ price was loaded.
+# Its SHA-256 is recorded in preregistration.lock at creation time and re-checked by the
+# validation script; the run aborts if this file changes.
+
+frozen_rules:
+  file: "../seasonal_patterns_2003_2022.json"
+  sha256: "6d8fbfbf56ee66cafd2d8938d93f4ec374d08d8dad67a1c5760b0413b749beac"
+  expected_windows: 120
+  expected_months: 12
+  primary_hypotheses: [Jul01+15td, Sep16+10td, Mar16+30td, Jul01+20td, Nov16+15td, Apr16+10td, Apr16+5td, Nov16+30td]
+
+data:
+  instrument: "^GSPC"           # same instrument, unadjusted closes, as Phase 1
+  source: "Yahoo Finance chart API v8, interval=1d, request bounded period1=2023-01-01"
+  min_date: "2023-01-01"        # loader rejects any earlier row (no mixing with 2003-2022 prices)
+  hard_stop: "2026-10-02"       # last completed trading day (request made Sat 2026-10-03)
+  first_entry_rule: "If no bar exists before an anchor (Jan 2023), use the open of the first 2023 bar — same rule Phase 1 used for Jan 2003."
+
+completeness:
+  rule: "An occurrence counts only if its exit bar is on or before hard_stop. Incomplete occurrences are listed separately and excluded from every statistic."
+
+definitions:
+  d: "+1 for a bullish rule, -1 for a bearish rule (frozen designation)"
+  r: "simple price return, entry close -> exit close (same as Phase 1)"
+  base_IS: "frozen in-sample mean return for the same holding length (from the JSON)"
+  e: "OOS excess = mean(r) - base_IS"
+  E_IS: "frozen in-sample mean excess return"
+  rho: "e / E_IS  (share of the historical edge that reappeared; >0 = same direction)"
+  hit_excess: "share of OOS occurrences with d*(r - base_IS) > 0"
+  win_raw: "share of OOS occurrences with r > 0 (reported, but not used to classify — drift makes it easy for bullish rules)"
+
+effect_direction:
+  # if |E_IS| < 0.0025 the ratio is unstable; use absolute thresholds on d*e instead (in brackets)
+  same_direction:         "rho >= 0.75            [d*e >= +0.25%]"
+  weaker_same_direction:  "0.25 <= rho < 0.75     [n/a]"
+  neutral:                "-0.25 < rho < 0.25     [|e| < 0.25%]"
+  opposite_direction:     "rho <= -0.25           [d*e <= -0.25%]"
+
+validation_classification:
+  INCONCLUSIVE_small_n: "N < 3 completed OOS occurrences"
+  SUPPORTIVE: "N >= 3 AND rho >= 0.50 AND hit_excess >= 2/3"
+  PARTIALLY_SUPPORTIVE: "N >= 3 AND rho >= 0.25 AND hit_excess >= 0.50, and not SUPPORTIVE"
+  CONTRADICTED: "N >= 3 AND rho <= -0.25 AND hit_excess <= 0.50"
+  INCONCLUSIVE: "everything else"
+  note: "With N = 3-4, SUPPORTIVE means 'consistent with the hypothesis', never 'statistically proven'. Proof would need the aggregate tests below."
+
+scorecard_components:   # for the 8 primary hypotheses
+  direction_match: "Supportive if rho >= 0.25; Partially Supportive if 0 < rho < 0.25; Contradicted if rho <= -0.25; else Inconclusive"
+  win_rate_consistency: "compare OOS hit_excess with IS hit rate in the designated direction: Supportive if within 25 pp or higher; Partially if 25-50 pp lower; Contradicted if > 50 pp lower"
+  return_consistency: "Supportive if rho >= 0.5; Partially if 0.25 <= rho < 0.5; Contradicted if rho <= -0.25; else Inconclusive"
+  drawdown_consistency: "Bullish: Supportive if OOS avg max-DD is no worse than IS avg max-DD + 1 pp; Partially if within +3 pp; else Contradicted. Bearish: Supportive if OOS avg max-DD is at least as deep as IS avg; Partially if within 1 pp shallower; else Contradicted"
+  benchmark_advantage: "Supportive if d*(mean r - OOS same-length unconditional mean) > 0 AND placebo percentile in the expected tail >= 75%; Partially if only the first holds; Contradicted if d*(...) < 0 and placebo percentile <= 25%; else Inconclusive"
+  overall: "= the rule's validation_classification above"
+
+benchmarks:
+  primary: "frozen in-sample same-length mean (base_IS), per the frozen protocol"
+  secondary: "OOS unconditional mean of ALL overlapping same-length windows 2023-01-03..hard_stop (contemporaneous drift)"
+  placebo: "calendar scramble on OOS data: for each completed occurrence-year, start at a uniformly random OOS trading day; 10,000 draws; percentile of the observed mean return within the placebo distribution. Context only — never used to create or move rules."
+  seed: 20230101
+
+aggregate_tests:
+  Q1_bullish: "Pool all completed occurrences of the 7 bullish primary rules: mean excess vs base_IS and vs OOS drift; one-sided placebo p-value for the pooled mean (same random shift per year across rules to keep their overlap)."
+  Q2_bearish_drawdown: "Sep16+10td excess and placebo. Drawdown set = the 12 windows listed in Phase-1 drawdown tables (10td: Jun16, Mar01, Jan16, May01, Oct01, Feb16; 20td: Sep16, Jun01, Jun16, Feb16, Mar01, Jan16): OOS frequency of max-DD >= 3% vs OOS unconditional same-length frequency (pooled one-sided binomial)."
+  Q3_magnitude: "pooled rho for the 8 primaries; Spearman correlation between IS mean excess and OOS mean excess across all 132 rules (one-sided, H1: positive)."
+  Q4_direction: "counts of same / weaker / neutral / opposite across the 8 and across all 132; binomial test that the share of 132 rules with d*e > 0 exceeds 50%."
+  Q5_random: "placebo percentile of each primary rule and of the pooled bullish mean."
+  alpha: 0.05

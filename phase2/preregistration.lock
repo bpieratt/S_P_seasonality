@@ -1,0 +1,7 @@
+7a56d8bea893a04fcfefcc470d15f3c9dcae2eefb920f5448d7a77db6c89457e  oos_validation_criteria.yaml
+locked_at_utc 2026-10-03T23:35:57Z
+no 2023+ price data present at lock time:
+total 456
+drwxr-xr-x 2 root root   4096 Oct  3 16:19 .
+drwxr-xr-x 6 root root   4096 Oct  3 16:35 ..
+-rw------- 1 root root 458176 Oct  3 16:19 GSPC_2003_2022.csv

@@ -1,0 +1,50 @@
+# S&P 500 Historical Seasonality Discovery Study — configuration (frozen with results)
+study:
+  instrument: "^GSPC"            # S&P 500 price index (no dividends)
+  data_file: "data/GSPC_2003_2022.csv"
+  data_sha256: "1c18355aae536fca0caed1ca67accd03ac790f65ef2eeddda2a65085fb9ad15f"
+  data_source: "Yahoo Finance chart API v8, interval=1d, period1=2003-01-01, period2=2022-12-31 (request itself bounded)"
+  start_date: "2003-01-01"
+  end_date: "2022-12-31"
+  subperiods:
+    A: ["2003-01-01", "2012-12-31"]
+    B: ["2013-01-01", "2022-12-31"]
+
+data_guardrails:
+  hard_stop_date: "2022-12-31"
+  allow_future_data: false
+
+seasonality:
+  # Pre-declared, non-optimised search grid: windows start on the first trading
+  # day on/after the 1st and the 16th of every month (24 anchors) and run for a
+  # fixed number of trading days. 24 anchors x 5 lengths = 120 windows tested.
+  anchor_days_of_month: [1, 16]
+  window_lengths: [5, 10, 15, 20, 30]
+  entry_price: "close of the last trading day before the anchor date"
+  exit_price: "close of the Nth trading day starting at the anchor date"
+  price_field: "Close"
+  min_years: 18
+
+statistics:
+  # Seasonality is tested as EXCESS return over the unconditional drift
+  # (mean N-day return across all days 2003-2022), so a window is not called
+  # "bullish" merely because stocks rise on average.
+  fdr_method: "benjamini-hochberg"
+  fdr_q: 0.10
+  permutation_draws: 2000          # within-year circular-shift calendar scramble, max-|t| FWER
+  bootstrap_draws: 10000
+  random_seed: 20221231
+
+classification:
+  strong:
+    fdr_q_max: 0.10
+    wilcoxon_p_max: 0.05
+    both_halves_same_sign: true
+    min_hit_rate: 0.65            # % positive (bullish) or % negative (bearish)
+    robust_to_dropping_top2: true
+  moderate:
+    raw_p_max: 0.05               # t-test OR Wilcoxon, excess return
+    both_halves_same_sign: true
+    robust_to_dropping_top2: true
+  weak:
+    raw_p_max: 0.20
