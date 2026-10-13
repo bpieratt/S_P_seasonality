@@ -1,0 +1,428 @@
+{
+  "S1_overlap_dependence": {
+    "question": "Overlapping windows (e.g. Jul01+15td and Jul01+20td) share most of their days, so their results are correlated. Did Phase 1 overstate how many independent chances it had?",
+    "n_windows": 120,
+    "mean_abs_pairwise_corr": 0.2473790706654062,
+    "share_pairs_corr_gt_0_5": 0.09033613445378151,
+    "effective_independent_tests_li_ji": 26.5,
+    "effective_independent_tests_nyholt": 108.3,
+    "best_raw_p": 0.00529,
+    "best_p_bonferroni_at_m_eff": 0.14030262224280607,
+    "min_bh_q_using_wilcoxon_instead_of_t": 0.6372,
+    "original_min_bh_q": 0.63506,
+    "original_min_perm_fwer_p": 0.3963,
+    "note": "With only 20 years of data the 120 windows cannot carry more than ~20 independent pieces of information. Even crediting that, the best window does not reach significance. The original permutation test already accounted for overlap."
+  },
+  "S2_same_year_placebo": {
+    "question": "The Phase-2 placebo drew random windows from anywhere in 2023-2026. Should it instead stay inside each occurrence's own year, so a 2023 trade is compared only with other 2023 trades?",
+    "pooled_bullish_observed_mean_excess": 0.01072473076923077,
+    "original_reported_p": 0.3588,
+    "variants": {
+      "anywhere_in_2023_2026": {
+        "placebo_mean_excess": 0.0071703114165477646,
+        "p_one_sided": 0.29647035296470353
+      },
+      "same_calendar_year": {
+        "placebo_mean_excess": 0.0071128094958147585,
+        "p_one_sided": 0.2933706629337066
+      }
+    },
+    "per_primary": {
+      "Jul01+15td": {
+        "anywhere_percentile": 0.5832,
+        "same_year_percentile": 0.5941
+      },
+      "Sep16+10td": {
+        "anywhere_percentile": 0.7228,
+        "same_year_percentile": 0.7212
+      },
+      "Mar16+30td": {
+        "anywhere_percentile": 0.661,
+        "same_year_percentile": 0.6631
+      },
+      "Jul01+20td": {
+        "anywhere_percentile": 0.3436,
+        "same_year_percentile": 0.3563
+      },
+      "Nov16+15td": {
+        "anywhere_percentile": 0.7206,
+        "same_year_percentile": 0.7002
+      },
+      "Apr16+10td": {
+        "anywhere_percentile": 0.7573,
+        "same_year_percentile": 0.7679
+      },
+      "Apr16+5td": {
+        "anywhere_percentile": 0.3378,
+        "same_year_percentile": 0.3522
+      },
+      "Nov16+30td": {
+        "anywhere_percentile": 0.5879,
+        "same_year_percentile": 0.5731
+      }
+    },
+    "note": "Placebo p-values here are re-computed with a different random seed, so the 'anywhere' variant will differ slightly from the original 0.36."
+  },
+  "S3_cross_rule_tests": {
+    "question": "Phase 2 treated the 132 rules as independent when testing whether in-sample winners stayed winners (Spearman) and whether more than half kept their direction (binomial). The rules overlap heavily, so those p-values may be too small.",
+    "observed_spearman": 0.152014515836714,
+    "original_reported_p_spearman": 0.041,
+    "calendar_shift_p_spearman": 0.2303848075962019,
+    "observed_share_same_direction_vs_is_base": 0.5454545454545454,
+    "original_reported_p_binomial": 0.169,
+    "calendar_shift_p_share": 0.27136431784107945,
+    "null_spearman_p05_p95": [
+      -0.356183571350305,
+      0.3510318127031666
+    ],
+    "null_share_p05_p95": [
+      0.3560606060606061,
+      0.6212121212121212
+    ],
+    "method": "Shift every rule's OOS entry by the same random number of trading days (wrapping inside 2023-2026), keeping all overlaps between rules intact, and recompute both statistics 2,000 times."
+  },
+  "S4_entry_exit": {
+    "question": "Do entries and exits match the frozen definitions, and does any convention change results?",
+    "primary_occurrences_checked": 30,
+    "all_match_definition": true,
+    "checks": [
+      {
+        "rule": "Mar16+30td",
+        "year": 2023,
+        "entry": "2023-03-15",
+        "first_day_held": "2023-03-16",
+        "exit": "2023-04-27",
+        "trading_days_held": 30,
+        "as_defined": true
+      },
+      {
+        "rule": "Mar16+30td",
+        "year": 2024,
+        "entry": "2024-03-15",
+        "first_day_held": "2024-03-18",
+        "exit": "2024-04-29",
+        "trading_days_held": 30,
+        "as_defined": true
+      },
+      {
+        "rule": "Mar16+30td",
+        "year": 2025,
+        "entry": "2025-03-14",
+        "first_day_held": "2025-03-17",
+        "exit": "2025-04-28",
+        "trading_days_held": 30,
+        "as_defined": true
+      },
+      {
+        "rule": "Mar16+30td",
+        "year": 2026,
+        "entry": "2026-03-13",
+        "first_day_held": "2026-03-16",
+        "exit": "2026-04-27",
+        "trading_days_held": 30,
+        "as_defined": true
+      },
+      {
+        "rule": "Apr16+5td",
+        "year": 2023,
+        "entry": "2023-04-14",
+        "first_day_held": "2023-04-17",
+        "exit": "2023-04-21",
+        "trading_days_held": 5,
+        "as_defined": true
+      },
+      {
+        "rule": "Apr16+5td",
+        "year": 2024,
+        "entry": "2024-04-15",
+        "first_day_held": "2024-04-16",
+        "exit": "2024-04-22",
+        "trading_days_held": 5,
+        "as_defined": true
+      },
+      {
+        "rule": "Apr16+5td",
+        "year": 2025,
+        "entry": "2025-04-15",
+        "first_day_held": "2025-04-16",
+        "exit": "2025-04-23",
+        "trading_days_held": 5,
+        "as_defined": true
+      },
+      {
+        "rule": "Apr16+5td",
+        "year": 2026,
+        "entry": "2026-04-15",
+        "first_day_held": "2026-04-16",
+        "exit": "2026-04-22",
+        "trading_days_held": 5,
+        "as_defined": true
+      },
+      {
+        "rule": "Apr16+10td",
+        "year": 2023,
+        "entry": "2023-04-14",
+        "first_day_held": "2023-04-17",
+        "exit": "2023-04-28",
+        "trading_days_held": 10,
+        "as_defined": true
+      },
+      {
+        "rule": "Apr16+10td",
+        "year": 2024,
+        "entry": "2024-04-15",
+        "first_day_held": "2024-04-16",
+        "exit": "2024-04-29",
+        "trading_days_held": 10,
+        "as_defined": true
+      },
+      {
+        "rule": "Apr16+10td",
+        "year": 2025,
+        "entry": "2025-04-15",
+        "first_day_held": "2025-04-16",
+        "exit": "2025-04-30",
+        "trading_days_held": 10,
+        "as_defined": true
+      },
+      {
+        "rule": "Apr16+10td",
+        "year": 2026,
+        "entry": "2026-04-15",
+        "first_day_held": "2026-04-16",
+        "exit": "2026-04-29",
+        "trading_days_held": 10,
+        "as_defined": true
+      },
+      {
+        "rule": "Jul01+15td",
+        "year": 2023,
+        "entry": "2023-06-30",
+        "first_day_held": "2023-07-03",
+        "exit": "2023-07-24",
+        "trading_days_held": 15,
+        "as_defined": true
+      },
+      {
+        "rule": "Jul01+15td",
+        "year": 2024,
+        "entry": "2024-06-28",
+        "first_day_held": "2024-07-01",
+        "exit": "2024-07-22",
+        "trading_days_held": 15,
+        "as_defined": true
+      },
+      {
+        "rule": "Jul01+15td",
+        "year": 2025,
+        "entry": "2025-06-30",
+        "first_day_held": "2025-07-01",
+        "exit": "2025-07-22",
+        "trading_days_held": 15,
+        "as_defined": true
+      },
+      {
+        "rule": "Jul01+15td",
+        "year": 2026,
+        "entry": "2026-06-30",
+        "first_day_held": "2026-07-01",
+        "exit": "2026-07-22",
+        "trading_days_held": 15,
+        "as_defined": true
+      },
+      {
+        "rule": "Jul01+20td",
+        "year": 2023,
+        "entry": "2023-06-30",
+        "first_day_held": "2023-07-03",
+        "exit": "2023-07-31",
+        "trading_days_held": 20,
+        "as_defined": true
+      },
+      {
+        "rule": "Jul01+20td",
+        "year": 2024,
+        "entry": "2024-06-28",
+        "first_day_held": "2024-07-01",
+        "exit": "2024-07-29",
+        "trading_days_held": 20,
+        "as_defined": true
+      },
+      {
+        "rule": "Jul01+20td",
+        "year": 2025,
+        "entry": "2025-06-30",
+        "first_day_held": "2025-07-01",
+        "exit": "2025-07-29",
+        "trading_days_held": 20,
+        "as_defined": true
+      },
+      {
+        "rule": "Jul01+20td",
+        "year": 2026,
+        "entry": "2026-06-30",
+        "first_day_held": "2026-07-01",
+        "exit": "2026-07-29",
+        "trading_days_held": 20,
+        "as_defined": true
+      },
+      {
+        "rule": "Sep16+10td",
+        "year": 2023,
+        "entry": "2023-09-15",
+        "first_day_held": "2023-09-18",
+        "exit": "2023-09-29",
+        "trading_days_held": 10,
+        "as_defined": true
+      },
+      {
+        "rule": "Sep16+10td",
+        "year": 2024,
+        "entry": "2024-09-13",
+        "first_day_held": "2024-09-16",
+        "exit": "2024-09-27",
+        "trading_days_held": 10,
+        "as_defined": true
+      },
+      {
+        "rule": "Sep16+10td",
+        "year": 2025,
+        "entry": "2025-09-15",
+        "first_day_held": "2025-09-16",
+        "exit": "2025-09-29",
+        "trading_days_held": 10,
+        "as_defined": true
+      },
+      {
+        "rule": "Sep16+10td",
+        "year": 2026,
+        "entry": "2026-09-15",
+        "first_day_held": "2026-09-16",
+        "exit": "2026-09-29",
+        "trading_days_held": 10,
+        "as_defined": true
+      },
+      {
+        "rule": "Nov16+15td",
+        "year": 2023,
+        "entry": "2023-11-15",
+        "first_day_held": "2023-11-16",
+        "exit": "2023-12-07",
+        "trading_days_held": 15,
+        "as_defined": true
+      },
+      {
+        "rule": "Nov16+15td",
+        "year": 2024,
+        "entry": "2024-11-15",
+        "first_day_held": "2024-11-18",
+        "exit": "2024-12-09",
+        "trading_days_held": 15,
+        "as_defined": true
+      },
+      {
+        "rule": "Nov16+15td",
+        "year": 2025,
+        "entry": "2025-11-14",
+        "first_day_held": "2025-11-17",
+        "exit": "2025-12-08",
+        "trading_days_held": 15,
+        "as_defined": true
+      },
+      {
+        "rule": "Nov16+30td",
+        "year": 2023,
+        "entry": "2023-11-15",
+        "first_day_held": "2023-11-16",
+        "exit": "2023-12-29",
+        "trading_days_held": 30,
+        "as_defined": true
+      },
+      {
+        "rule": "Nov16+30td",
+        "year": 2024,
+        "entry": "2024-11-15",
+        "first_day_held": "2024-11-18",
+        "exit": "2024-12-31",
+        "trading_days_held": 30,
+        "as_defined": true
+      },
+      {
+        "rule": "Nov16+30td",
+        "year": 2025,
+        "entry": "2025-11-14",
+        "first_day_held": "2025-11-17",
+        "exit": "2025-12-30",
+        "trading_days_held": 30,
+        "as_defined": true
+      }
+    ],
+    "label_note": "Window names such as 'Jul 1 -> Jul 22' show the TYPICAL exit date. The rule is defined in trading days, so the actual exit moves by 1-3 calendar days from year to year (the frozen file records the range).",
+    "jan_2023_entry": {
+      "rule_used": "Jan 2023 occurrences enter at the 2023-01-03 OPEN because the OOS file has no earlier bar (same rule Phase 1 used for Jan 2003).",
+      "open_price": 3853.29,
+      "prior_close_2022_12_30": 3839.5,
+      "jan_2023_month_return_as_reported": 0.05795,
+      "jan_2023_month_return_from_prior_close": 0.06175283240005203,
+      "affects": [
+        "Jan01+10td",
+        "Jan01+15td",
+        "Jan01+20td",
+        "Jan01+30td",
+        "Jan01+5td",
+        "MONTH-Jan"
+      ],
+      "affects_primary": false
+    }
+  },
+  "S5_partial_2026": {
+    "question": "Were unfinished 2026 periods kept out of every statistic?",
+    "incomplete_occurrences": 37,
+    "any_incomplete_has_return": false,
+    "by_status": {
+      "not started": 27,
+      "in progress (exits after 2026-10-02)": 9,
+      "in progress (month ends after 2026-10-02)": 1
+    },
+    "rules_with_N_3": [
+      "Dec01+10td",
+      "Dec01+15td",
+      "Dec01+20td",
+      "Dec01+30td",
+      "Dec01+5td",
+      "Dec16+10td",
+      "Dec16+15td",
+      "Dec16+20td",
+      "Dec16+30td",
+      "Dec16+5td",
+      "MONTH-Dec",
+      "MONTH-Nov",
+      "MONTH-Oct",
+      "Nov01+10td",
+      "Nov01+15td",
+      "Nov01+20td",
+      "Nov01+30td",
+      "Nov01+5td",
+      "Nov16+10td",
+      "Nov16+15td",
+      "Nov16+20td",
+      "Nov16+30td",
+      "Nov16+5td",
+      "Oct01+10td",
+      "Oct01+15td",
+      "Oct01+20td",
+      "Oct01+30td",
+      "Oct01+5td",
+      "Oct16+10td",
+      "Oct16+15td",
+      "Oct16+20td",
+      "Oct16+30td",
+      "Oct16+5td",
+      "Sep01+30td",
+      "Sep16+15td",
+      "Sep16+20td",
+      "Sep16+30td"
+    ],
+    "note": "Rules whose 2026 occurrence had not finished by 2026-10-02 have N = 3 instead of 4. That is correct (no partial result is used) but means late-year rules carry a little less evidence."
+  }
+}

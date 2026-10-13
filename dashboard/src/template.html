@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>S&amp;P 500 Seasonality Dashboard</title>
+<style>{{CSS}}</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="header">
+  <div>
+    <h1>S&amp;P 500 Seasonality Research</h1>
+    <div class="subtitle">Does the S&amp;P 500 behave differently at certain times of year? This dashboard asks that question of 20 years of history (2003–2022) and then checks the answer against {{oos_years_word}} newer years (2023 to {{oos_last_long}}) that played no part in the original discovery.</div>
+  </div>
+  <span class="status-pill pill-research">Research · not a trading signal</span>
+</header>
+
+<div class="run-meta">
+  <div class="meta-card"><div class="label">Historical period [[i:is]]</div><div class="value">2003–2022</div><div class="sub">{{is_months}} months · {{is_days}} trading days</div></div>
+  <div class="meta-card"><div class="label">Newer test period [[i:oos]]</div><div class="value">2023–2026</div><div class="sub">{{oos_months}} complete months · through {{oos_last_short}}</div></div>
+  <div class="meta-card"><div class="label">Calendar rules tested</div><div class="value">132</div><div class="sub">120 windows + 12 months</div></div>
+  <div class="meta-card"><div class="label">Passed strict statistics</div><div class="value">0 of 132</div><div class="sub">after multiple-testing correction [[i:mtc]]</div></div>
+  <div class="meta-card"><div class="label">Best-supported idea</div><div class="value">Apr 16–29</div><div class="sub">up in all 4 newer years, still unproven</div></div>
+  <div class="meta-card"><div class="label">Frozen rules unchanged</div><div class="value pos">Verified</div><div class="sub">file checksum matches</div></div>
+</div>
+
+<nav class="tabs" aria-label="Sections">
+  <a href="#summary">Summary</a><a href="#history">2003–2022</a><a href="#heat-hist">Heat map: history</a><a href="#heat-new">Heat map: 2023–26</a><a href="#compare">Then vs now</a><a href="#rules">Rule check</a><a href="#review">Statistical review</a><a href="#glossary">Glossary</a>
+</nav>
+
+<noscript><div class="noscript-fallback"><b>JavaScript is turned off.</b> The written summary below still reads correctly, but the heat maps, charts, sortable tables and term explanations need JavaScript. The original reports are in the <code>docs/</code> folder.</div></noscript>
+
+<!-- ============================ A. EXECUTIVE SUMMARY ============================ -->
+<section id="summary">
+<h2 class="section-title">Executive summary <span class="tag">plain-English answers</span></h2>
+
+<div class="banner warn" style="margin-bottom:14px">
+  <strong>A good past record is not the same as a reliable edge.</strong>
+  The S&amp;P 500 rose in about two out of every three months in both periods, so almost any calendar window "worked" most of the time. A seasonal pattern only matters if it beats that ordinary upward drift [[i:drift]] by more than luck would explain. None of the 132 calendar rules cleared that bar in the historical data. In the newer data, the bullish rules as a group did no better than randomly chosen dates.
+</div>
+
+<div class="grid3">
+  <div class="qa-card">
+    <div class="q">1. Does the S&amp;P 500 show recurring seasonal patterns?</div>
+    <div class="badges"><span class="badge ev-hist">Historical observation</span><span class="badge ev-none">No reliable advantage</span></div>
+    <div class="a">There are tendencies, but none is reliable. April rose in 16 of 20 years and July in 15. Yet after allowing for the fact that 120 windows were tested, none stood out from chance. {{p1_raw}} windows looked "significant" on their own, about the {{p1_expected}} that pure luck would produce.</div>
+  </div>
+  <div class="qa-card">
+    <div class="q">2. Which periods did best and worst historically?</div>
+    <div class="badges"><span class="badge ev-hist">Historical observation</span></div>
+    <div class="a"><b>Best months:</b> April ({{apr_avg}} on average), July ({{jul_avg}}) and November ({{nov_avg}}). <b>Weakest:</b> September ({{sep_avg}}), January ({{jan_avg}}) and June ({{jun_avg}}). The most promising shorter windows were mid-March to late April, early-to-late July, mid-April and mid-November to early December. Late September was the one weak window.</div>
+  </div>
+  <div class="qa-card">
+    <div class="q">3. Did those patterns continue in 2023–2026?</div>
+    <div class="badges"><span class="badge ev-supp">Partly supported</span><span class="badge ev-contra">Several reversed</span></div>
+    <div class="a">Mixed. Two short windows held up in every newer year: <b>Apr 16 → Apr 29</b> and <b>mid-November</b>. Early July weakened, and the late-September dip did not return. The monthly pattern mostly broke down: January, May and June, historically soft, were among the strongest months of 2023–2026. Only {{month_same_sign}} of 12 months kept their historical direction.</div>
+  </div>
+  <div class="qa-card">
+    <div class="q">4. What looks encouraging but is still uncertain?</div>
+    <div class="badges"><span class="badge ev-inc">Inconclusive</span></div>
+    <div class="a">The <b>Apr 16 → Apr 29</b> window (up {{apr_oos_n}} of {{apr_oos_n}} newer years, averaging {{apr_oos_mean}}) and the <b>mid-November</b> windows (up 3 of 3). They are consistent with the history, but 3–4 years is far too few to prove anything. Their likely range of outcomes still includes zero or close to it.</div>
+  </div>
+  <div class="qa-card">
+    <div class="q">5. What does this mean for an investor?</div>
+    <div class="badges"><span class="badge ev-none">No demonstrated trading edge</span></div>
+    <div class="a">The calendar alone has not shown a dependable advantage. In 2023–2026 the bullish windows gained {{q1_pooled}} per occurrence, but random windows of the same length gained nearly as much ({{q1_vs_drift}} difference; placebo p = {{q1_p}}). After trading costs and taxes, an edge that small could disappear. Treat seasonality as background context, not a reason to buy or sell.</div>
+  </div>
+  <div class="qa-card">
+    <div class="q">How sure are these answers?</div>
+    <div class="badges"><span class="badge ev-new">Read with care</span></div>
+    <div class="a">The historical "no reliable edge" conclusion is solid: it survives every check, including the new sensitivity review. The newer-period findings rest on only 3–4 observations per rule, so treat them as hints worth watching, not conclusions. See <a href="#review">Statistical review</a> for what was double-checked.</div>
+  </div>
+</div>
+
+<div class="legend-row" style="margin-top:12px">
+  <span><span class="badge ev-hist">Historical observation</span> seen in 2003–2022 only</span>
+  <span><span class="badge ev-supp">Supported</span> held up in the newer data</span>
+  <span><span class="badge ev-inc">Inconclusive</span> too little data to tell</span>
+  <span><span class="badge ev-none">No reliable advantage</span> not better than ordinary market behavior</span>
+  <span><span class="badge ev-contra">Reversed</span> went the other way</span>
+</div>
+</section>
+
+<!-- ============================ B. HISTORICAL DASHBOARD ============================ -->
+<section id="history">
+<h2 class="section-title">Historical performance, 2003–2022 <span class="tag">20 years · the discovery period</span></h2>
+<p class="lead">How each calendar month behaved over the 20 years used to discover patterns. "Typical month" means the average of all 240 months, {{is_avg_month}}. A month only stands out if it beats that.</p>
+
+<div class="panel">
+  <div class="panel-h">
+    <div><h3>Average return by calendar month [[i:avg]]</h3><div class="desc">Average % change in the S&amp;P 500 during each calendar month. Switch views to compare with 2023–2026.</div></div>
+    <div class="seg" role="group" aria-label="Monthly chart view" data-chart="months">
+      <button type="button" aria-pressed="true" data-v="hist">2003–2022</button><button type="button" aria-pressed="false" data-v="recent">2023–2026</button><button type="button" aria-pressed="false" data-v="both">Side by side</button>
+    </div>
+  </div>
+  <div class="panel-b"><div class="chart" id="ch-months"></div><div class="chart-legend" id="lg-months"></div></div>
+  <div class="tell" id="tell-months"></div>
+</div>
+
+<div class="panel" style="margin-top:14px">
+  <div class="panel-h"><div><h3>Month-by-month scorecard, 2003–2022</h3><div class="desc">Click any column heading to sort. Each month has 20 observations.</div></div></div>
+  <div class="tw"><table class="data sortable" id="tbl-months"></table></div>
+  <div class="tell"><div class="t">What does this table tell me?</div>April and July were the most consistent risers, and September was the weakest month. But even April's lead over a typical month (+1.6 points) had a p-value of 0.14 <span class="dim">(not significant)</span>. After correcting for 12 months tested, the lowest q-value was {{min_month_q}}. Notice the drawdown column: even the best months had years with deep falls.</div>
+  <details class="tech"><summary>Technical details: p-values and q-values per month</summary><div class="inner"><div class="tw"><table class="data" id="tbl-months-tech"></table></div></div></details>
+</div>
+
+<div class="panel" style="margin-top:14px">
+  <div class="panel-h"><div><h3>Strongest and weakest calendar windows found in 2003–2022 [[i:window]]</h3><div class="desc">The 8 windows with the best historical evidence, out of 120 tested. They were frozen before the newer data was examined. All of them fell short of the strict statistical test; their evidence is "Moderate" at best.</div></div></div>
+  <div class="tw"><table class="data" id="tbl-windows-hist"></table></div>
+  <div class="tell"><div class="t">What does this table tell me?</div>These windows beat (or, for the bearish one, lagged) an ordinary period of the same length by roughly 0.6 to 2.4 points, and the bullish ones rose in 80–90% of years. But with 120 windows searched, a handful of results this good would turn up by chance alone. That is why none qualified as "Strong".</div>
+</div>
+</section>
+
+<!-- ============================ C. HISTORICAL HEAT MAP ============================ -->
+<section id="heat-hist">
+<h2 class="section-title">Heat map: monthly returns, 2003–2022</h2>
+<div class="panel">
+  <div class="panel-h"><div><h3>Every month, every year</h3><div class="desc">Each cell is the S&amp;P 500's actual % change for that month [[i:f_month]]. The right-hand column is the full-year return. The bottom row is each month's 20-year average.</div></div></div>
+  <div class="panel-b"><div class="heat-wrap" id="heat-hist-tbl"></div><div class="legend-row" id="heat-legend-1"></div></div>
+  <div class="tell">
+    <div class="t">How to read this heat map</div>
+    <div class="howto">
+      <div><b>Colors</b><span class="pos">Teal</span> months rose and <span class="neg">red</span> months fell. The darker the color, the bigger the move. Grey means close to flat (between −0.5% and +0.5%). Colors stop getting darker beyond ±8%, but the cell shows the exact number.</div>
+      <div><b>Looking for patterns</b>Read down a column to see one calendar month across 20 years. A column that is mostly teal (April, July) suggests a tendency. A column with mixed colors suggests no tendency at all.</div>
+      <div><b>Why repetition isn't proof</b>The market rose in 65% of all months, so most columns are mostly teal by default. With 12 columns, one or two will look streaky by chance. The 2008 and 2020 crashes also dominate the red cells, and those were one-off events, not seasons.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================ D. NEW VALIDATION HEAT MAP ============================ -->
+<section id="heat-new">
+<h2 class="section-title">Heat map: monthly returns, 2023–2026 <span class="tag">newer test data · never used to build the rules</span></h2>
+<div class="panel">
+  <div class="panel-h"><div><h3>The newer period, on the same scale</h3><div class="desc">Same calculation, same colors and same scale as the historical heat map. October 2026 was still in progress on {{oos_last_long}}, so it shows as <b>In progress</b> and is never given a monthly return. November and December 2026 had not started. The 2026 year column covers January–September only.</div></div></div>
+  <div class="panel-b"><div class="heat-wrap" id="heat-new-tbl"></div><div class="legend-row" id="heat-legend-2"></div></div>
+  <div class="tell">
+    <div class="t">What changed between the historical period and the newer data?</div>
+    <div class="howto">
+      <div><b>A stronger market overall</b>The average month gained {{oos_avg_month}} in 2023–2026 versus {{is_avg_month}} in 2003–2022, and the worst single month was {{oos_worst_single}} ({{oos_worst_single_ym}}) against {{is_worst_single}} ({{is_worst_single_ym}}). With no 2008-style crash, most cells are teal.</div>
+      <div><b>The monthly pattern mostly did not repeat</b>Historically soft months (January, May, June) were among the best of 2023–2026, and March, historically average, was the weakest. Only {{month_same_sign}} of 12 months kept their historical direction relative to a typical month, slightly worse than a coin flip.</div>
+      <div><b>Four years is not twenty</b>Each column here has only 3–4 cells. One unusual year, such as the April 2025 tariff shock or the +10% rebound in April 2026, can swing a column's average by several points. Treat this heat map as a check on the history, not a new set of findings.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================ E. COMPARISON ============================ -->
+<section id="compare">
+<h2 class="section-title">Historical vs. recent performance</h2>
+<div class="grid2">
+  <div class="panel">
+    <div class="panel-h"><div><h3>Side-by-side summary</h3><div class="desc">Complete months only, same definitions in both columns. 2023–2026 has {{oos_months}} months, against {{is_months}} historically.</div></div></div>
+    <div class="tw"><table class="data" id="tbl-compare"></table></div>
+    <div class="tell"><div class="t">What does this table tell me?</div>The newer period was calmer and stronger than the historical average. That alone makes any bullish calendar window look better, which is why the study compares windows with ordinary periods from the same years.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-h"><div><h3>Did the monthly tendencies persist?</h3><div class="desc">Each month's historical lean compared with how it behaved in 2023–2026, relative to that period's own typical month. Based on the frozen validation rules.</div></div></div>
+    <div class="tw"><table class="data" id="tbl-persist"></table></div>
+  </div>
+</div>
+
+<div class="panel" style="margin-top:14px">
+  <div class="panel-h">
+    <div><h3>The typical year: 2003–2022 vs 2023–2026 [[i:seasonality]]</h3><div class="desc">The index path through a calendar year, starting at 100 on the prior year-end. The historical line averages 20 years. The newer line averages only 3 complete years (2023–2025), plus 2026 so far.</div></div>
+    <div class="seg" role="group" aria-label="Seasonal path view" data-chart="path">
+      <button type="button" aria-pressed="false" data-v="hist">2003–2022</button><button type="button" aria-pressed="false" data-v="recent">2023–2026</button><button type="button" aria-pressed="true" data-v="both">Side by side</button>
+    </div>
+  </div>
+  <div class="panel-b"><div class="chart" id="ch-path"></div><div class="chart-legend" id="lg-path"></div></div>
+  <div class="tell" id="tell-path"></div>
+</div>
+</section>
+
+<!-- ============================ RULE CHECK ============================ -->
+<section id="rules">
+<h2 class="section-title">Did the frozen rules hold up? <span class="tag">the 8 main hypotheses, unchanged since 2022</span></h2>
+<p class="lead">These 8 windows were chosen and locked using only 2003–2022 data, then tested on 2023–2026. The pass/fail rules were also written down before the newer data was loaded. Rows stay in the original study's order and are not re-sorted by newer results. Click a row to see every year.</p>
+<div class="panel">
+  <div class="tw"><table class="data" id="tbl-primaries"></table></div>
+  <div class="tell"><div class="t">What does this table tell me?</div>Four windows were "Supportive": they kept at least half their historical edge and went the right way in most newer years. None was contradicted. But the "vs random" column shows how little the calendar added: in the strong 2023–2026 market, randomly timed windows of the same length did nearly as well. Supportive here means "consistent with the history", not "proven".</div>
+</div>
+
+<div class="grid2" style="margin-top:14px">
+  <div class="panel">
+    <div class="panel-h"><div><h3>Average return per window: then vs now</h3><div class="desc">▲ bullish windows should sit right of zero, ▼ bearish left. The grey tick shows what a random window of the same length earned in 2023–2026.</div></div></div>
+    <div class="panel-b"><div class="chart" id="ch-isoos"></div><div class="chart-legend" id="lg-isoos"></div></div>
+    <div class="tell"><div class="t">What does this chart tell me?</div>Where the amber bar sits close to the grey tick, the window did no better than random timing in the newer period. The April and November windows cleared the tick. The July windows and the short April window barely did, or didn't.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-h"><div><h3>Every newer year, losers included</h3><div class="desc">One mark per completed year. Windows still open, or not yet started, on {{oos_last_short}} are not shown.</div></div></div>
+    <div class="panel-b"><div class="chart" id="ch-years"></div><div class="chart-legend" id="lg-years"></div></div>
+    <div class="tell"><div class="t">What does this chart tell me?</div>Spread matters as much as the average. Mar 16 → Apr 27 averaged well, but that came from two strong years alongside one flat year and one losing year. Apr 16 → Apr 29 was positive every time, but only by +0.8% to +3.2%.</div>
+  </div>
+</div>
+
+<div class="panel" style="margin-top:14px">
+  <div class="panel-h"><div><h3>All 132 frozen rules</h3><div class="desc">Every rule tested, so the good results can't be cherry-picked. Search or filter; click a column to sort.</div></div></div>
+  <div class="toolbar"><input type="search" id="rule-search" placeholder="Search e.g. Apr, Nov16, MONTH" aria-label="Search rules"><select id="rule-filter" aria-label="Filter by verdict"><option value="">All verdicts</option><option>SUPPORTIVE</option><option>PARTIALLY SUPPORTIVE</option><option>INCONCLUSIVE</option><option>CONTRADICTED</option></select><span class="dim" id="rule-count"></span></div>
+  <div class="tw" style="max-height:520px;overflow:auto"><table class="data sortable" id="tbl-rules"></table></div>
+  <div class="tell"><div class="t">What does this table tell me?</div>Across all 132 rules, about as many were contradicted ({{n_contra}}) as supported ({{n_supp}}). Only {{share_vs_drift}} beat the 2023–2026 market drift in their original direction, about what coin-flipping would give. That is the strongest sign that the calendar rules, as a group, did not carry over.</div>
+</div>
+</section>
+
+<!-- ============================ STATISTICAL REVIEW ============================ -->
+<section id="review">
+<h2 class="section-title">Statistical review <span class="tag">new sensitivity analysis · {{review_date}} · original results unchanged</span></h2>
+<div class="banner info" style="margin-bottom:14px"><strong>What this section is.</strong>A second look at five places where the original method could have overstated confidence. Each check was run separately (<code>sensitivity/</code>) and reads the frozen research files without changing them. Where a check qualifies an original number, both are shown.</div>
+<div class="panel"><div class="tw"><table class="data" id="tbl-review"></table></div>
+<div class="tell"><div class="t">Bottom line of the review</div>The main conclusion stands, and if anything it is stronger: there is no statistically reliable calendar edge, either in 2003–2022 or in 2023–2026. One original number needs a caveat. The 2023–2026 report quoted p = 0.041 for "historical winners stayed ahead". Once you account for the rules overlapping each other, that becomes p ≈ {{s3_p}}, which is no longer even nominally significant.</div></div>
+</section>
+
+<!-- ============================ GLOSSARY ============================ -->
+<section id="glossary">
+<h2 class="section-title">Glossary and formulas <span class="tag">every term in plain English</span></h2>
+<div class="toolbar" style="border:1px solid var(--border);border-radius:8px;margin-bottom:12px"><input type="search" id="gl-search" placeholder="Search terms, e.g. p-value, drawdown" aria-label="Search glossary"><span class="dim" id="gl-count"></span></div>
+<div class="gl-grid" id="gl-terms"></div>
+<h3 style="margin:22px 0 10px">Formulas used in the research</h3>
+<div class="gl-grid" id="gl-formulas"></div>
+</section>
+
+<footer class="disclaimer">
+  <div><b>Sources.</b> ^GSPC daily closes from Yahoo Finance: <code>data/GSPC_2003_2022.csv</code> ({{is_days}} days) and <code>phase2/data/GSPC_2023_2026-10-02.csv</code> ({{oos_days}} days). Frozen rules: <code>seasonal_patterns_2003_2022.json</code>, SHA-256 <code>{{frozen_sha}}</code>, unchanged. Validation criteria SHA-256 <code>{{criteria_sha}}</code>.</div>
+  <div><b>Original reports</b> are kept unchanged: <a href="../docs/phase1_report.html">Phase 1 report</a> · <a href="../docs/phase2_oos_report.html">Phase 2 report</a>. This dashboard is presentation-only; it recalculates nothing in the research and its figures are cross-checked against the frozen files at build time.</div>
+  <div>Returns are price-only and exclude dividends, trading costs, slippage and taxes. This is educational research, not investment advice. Built {{build_date}}.</div>
+</footer>
+</div>
+
+<script>
+const DATA = {{DATA_JSON}};
+const GLOSSARY = {{GLOSSARY_JSON}};
+{{APP_JS}}
+</script>
+</body>
+</html>

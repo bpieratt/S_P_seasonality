@@ -21,6 +21,16 @@ Download and open in a browser:
 
 Chart images are in `outputs/charts/` (Phase 1) and `phase2/outputs/charts/` (Phase 2).
 
+## Dashboard (plain-English view)
+
+Open **`dashboard/index.html`** in a browser. It is one self-contained file that needs no installation or internet. It explains the whole study for a non-specialist: the executive summary, heat maps for 2003–2022 and for 2023–2026 (incomplete months clearly marked), a then-vs-now comparison, the rule check, a statistical review and a glossary with in-place explanations. See `dashboard/README.md` for details and `sensitivity/SENSITIVITY.md` for the separate sensitivity review.
+
+### Original research vs presentation-only files
+
+| Original research (frozen; not modified by the dashboard work) | Presentation and review additions |
+|---|---|
+| `config.yaml`, `data_handler.py`, `test_data_handler.py`, `analysis.py`, `build_outputs.py`, `make_report.py`, `data/`, `outputs/`, `seasonal_patterns_2003_2022.json` (+ `.sha256`), `report.html`, `docs/`, everything in `phase2/` | `dashboard/` (presentation only) and `sensitivity/` (separate checks that read the research files and write only into their own folder) |
+
 ## Layout
 
 ```
@@ -34,6 +44,8 @@ outputs/                          Phase-1 tables and chart PNGs
 data/GSPC_2003_2022.csv           Phase-1 prices (Yahoo Finance, unadjusted)
 phase2/                           out-of-sample validation: locked criteria, data, tests, outputs
 docs/                             both HTML reports
+dashboard/                        plain-English dashboard (presentation only)
+sensitivity/                      separate sensitivity review (2026-10-13)
 ```
 
 ## Reproduce

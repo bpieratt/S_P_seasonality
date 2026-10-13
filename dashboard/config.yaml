@@ -1,0 +1,8 @@
+# Dashboard presentation settings (presentation only — no research parameters live here).
+# Base palette mirrors bpieratt/seasonal-screener config/settings.yaml `dashboard.colors`.
+colors:
+  background: "#1A1F2E"
+  accent: "#00D4AA"
+  highlight: "#F5B642"
+output_file: "dashboard/index.html"
+review_date: "2026-10-13"
