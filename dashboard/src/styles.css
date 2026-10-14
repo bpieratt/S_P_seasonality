@@ -142,6 +142,15 @@ table.heat td.future { background: transparent; color: var(--neutral); font-weig
 .howto div { background: var(--bg-panel-alt); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13px; }
 .howto b { display: block; margin-bottom: 3px; }
 
+/* day-by-day calendar heat map */
+.cal-grid { display: grid; grid-template-columns: 38px repeat(31, minmax(15px, 1fr)); gap: 3px; min-width: 640px; font-size: 11px; color: var(--text-dim); }
+.cal-grid .dl { text-align: center; font-variant-numeric: tabular-nums; }
+.cal-grid .ml { display: flex; align-items: center; font-weight: 600; text-transform: uppercase; font-size: 10.5px; letter-spacing: .03em; }
+.cal-grid .c { aspect-ratio: 1; border-radius: 3px; }
+.cal-grid .c[data-t]:hover, .cal-grid .c[data-t]:focus-visible { outline: 2px solid var(--highlight); outline-offset: 0; }
+.cal-grid .c.none { background: transparent; }
+.grad { display: inline-block; width: 200px; max-width: 50vw; height: 10px; border-radius: 3px; vertical-align: middle; }
+
 /* charts */
 .chart { position: relative; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }

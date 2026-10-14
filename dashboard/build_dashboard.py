@@ -66,6 +66,7 @@ def main():
         s3_p=f'{data["sensitivity"]["S3_cross_rule_tests"]["calendar_shift_p_spearman"]:.2f}',
         frozen_sha=data["meta"]["frozen_sha"], criteria_sha=data["meta"]["criteria_sha"],
         build_date=dt.date.today().isoformat(),
+        base5=pct(data["calendar_heat"]["base5"]),
     )
     css = open(os.path.join(SRC, "styles.css")).read()
     for k, v in cfg["colors"].items():

@@ -206,6 +206,7 @@ def build():
                     oos_effect={m: vrules[f"MONTH-{m}"]["effect_direction"] for m in MON}),
         compare=dict(is_=summary(is_c, is_pm), oos=summary(oos_c, oos_pm), consistency=consistency),
         primaries=primaries, rules=allrules, aggregate=val["aggregate"], oos_drift=val["oos_drift_same_length"],
+        calendar_heat=dict(cells=rd["heat"], base5=frozen["windows"][0]["baseline_mean_return_same_length"]),
         paths=dict(labels=rd["labels"], is_avg=rd["avg"], is_med=rd["med"], is_prob=rd["prob"], oos_avg=oos_avg,
                    oos_years={str(y): oos_paths[y] for y in oos_paths}),
         phase1=dict(n_windows=120, n_raw_p05=sum(w["p_value_t"] < 0.05 for w in frozen["windows"]),

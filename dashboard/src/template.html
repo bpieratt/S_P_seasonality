@@ -128,6 +128,18 @@
     </div>
   </div>
 </div>
+<div class="panel" style="margin-top:14px" id="cal-heat">
+  <div class="panel-h"><div><h3>Calendar heat map: day by day, 2003–2022 [[i:excess]]</h3><div class="desc">Each square is one calendar date. Its color shows how the S&amp;P 500 did over the <b>next 5 trading days</b> from that date, compared with a normal 5-day stretch ({{base5}}), averaged over 2003–2022. Hover or tap a square for the exact figures.</div></div></div>
+  <div class="panel-b"><div class="heat-wrap"><div class="cal-grid" id="cal-grid" role="img" aria-label="Day-by-day calendar heat map of 5-day returns versus normal, 2003 to 2022"></div></div><div class="legend-row" id="cal-legend"></div></div>
+  <div class="tell">
+    <div class="t">How to read this heat map</div>
+    <div class="howto">
+      <div><b>Colors</b><span class="pos">Teal</span> dates were followed by a better-than-normal week and <span class="neg">red</span> dates by a worse-than-normal week. Grey means about normal (within ±0.1 points). The strongest colors are ±1.5 points.</div>
+      <div><b>Neighbours overlap</b>Sep 19 and Sep 20 share 4 of their 5 trading days, so a bad week in one year colors a whole streak of squares. A streak counts as one observation, not ten.</div>
+      <div><b>What does this tell me?</b><span id="cal-tell"></span></div>
+    </div>
+  </div>
+</div>
 </section>
 
 <!-- ============================ D. NEW VALIDATION HEAT MAP ============================ -->

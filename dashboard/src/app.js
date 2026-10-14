@@ -214,6 +214,27 @@ function heatLegend(el) {
     <span><span class="swatch" style="outline:1px dashed var(--border)"></span>Not yet happened</span>`;
 }
 
+/* ================================================================ C2. day-by-day calendar heat map */
+function calendarHeat() {
+  const H = DATA.calendar_heat, CAPC = 0.015, FLATC = 0.001, grid = $("#cal-grid");
+  const col = v => { if (Math.abs(v) < FLATC) return "var(--heat-zero)"; const t = Math.min(Math.abs(v) / CAPC, 1);
+    return `color-mix(in srgb, ${v > 0 ? css("--accent") : css("--fail")} ${Math.round(18 + 82 * t)}%, #232939)`; };
+  const by = {}; H.cells.forEach(c => by[c.m + "-" + c.d] = c);
+  let h = `<div></div>` + Array.from({ length: 31 }, (_, i) => `<div class="dl">${(i + 1) % 5 === 1 || i === 30 ? i + 1 : ""}</div>`).join("");
+  for (let m = 1; m <= 12; m++) {
+    h += `<div class="ml">${MON[m - 1]}</div>`;
+    for (let d = 1; d <= 31; d++) { const c = by[m + "-" + d];
+      h += c ? `<div class="c" tabindex="0" style="background:${col(c.ex)}" aria-label="${MON[m - 1]} ${d}: next 5 trading days ${pctPlain(c.ex)} versus normal, up in ${Math.round(c.pp * 100)}% of years" data-t="<b>${MON[m - 1]} ${d}</b><br>Next 5 trading days vs normal: ${ppts(c.ex).replace(/<[^>]+>/g, "")}<br>Market up over those 5 days in ${Math.round(c.pp * 100)}% of years (${c.n} yrs)"></div>` : `<div class="c none"></div>`; }
+  }
+  grid.innerHTML = h;
+  const tip = chartTip(grid.closest(".panel-b"));
+  grid.addEventListener("focusin", e => { const c = e.target.closest("[data-t]"); if (c) { const r = c.getBoundingClientRect(); tip.show({ clientX: r.right, clientY: r.top }, c.dataset.t); } });
+  grid.addEventListener("focusout", () => tip.hide());
+  $("#cal-legend").innerHTML = `<span>Next 5 trading days vs normal:</span><span class="neg">weaker</span><span class="grad" style="background:linear-gradient(90deg, ${css("--fail")}, #343B52, ${css("--accent")})"></span><span class="pos">stronger</span><span>(±1.5 points at full color)</span>`;
+  const s = H.cells.slice().sort((a, b) => a.ex - b.ex), f = c => `${MON[c.m - 1]} ${c.d} (${ppts(c.ex, 1).replace(/<[^>]+>/g, "")})`;
+  $("#cal-tell").innerHTML = `The weakest stretch was <strong>mid-to-late September (Sep 17–23)</strong>; the worst single dates were ${s.slice(0, 3).map(f).join(", ")}. The strongest were ${s.slice(-3).reverse().map(f).join(", ")}. Several streaks line up with the frozen windows (late September, mid-November, late March, early July), and like those windows, none passed the statistical tests. Treat the streaks as history, not a timetable.`;
+}
+
 /* ================================================================ E. comparison */
 function compareTables() {
   const a = DATA.compare.is_, b = DATA.compare.oos, c = DATA.compare.consistency;
@@ -423,6 +444,6 @@ function toggles() {
 monthsChart("hist"); monthTables(); windowsHist();
 heatTable($("#heat-hist-tbl"), DATA.heat.is_, DATA.heat.is_month_avg, "Each month: last close ÷ previous month's last close − 1. January 2003 starts from the Jan 2 open.");
 heatTable($("#heat-new-tbl"), DATA.heat.oos, DATA.heat.oos_month_avg, "Same calculation. January 2023 starts from the Jan 3 open, as the frozen study did. Averages use completed months only.", DATA.heat.oos_month_n);
-heatLegend($("#heat-legend-1")); heatLegend($("#heat-legend-2"));
+heatLegend($("#heat-legend-1")); heatLegend($("#heat-legend-2")); calendarHeat();
 compareTables(); pathChart("both"); primaries(); isoosChart(); yearsChart(); allRules(); review(); glossary(); toggles();
 })();
