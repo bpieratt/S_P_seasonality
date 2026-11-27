@@ -1,60 +1,81 @@
-# S&P 500 Calendar Seasonality
+# Seasonality dashboard
 
-A two-phase study of whether the S&P 500 (^GSPC) shows recurring calendar seasonality.
+A single, self-contained page that explains the S&P 500 seasonality study in plain English. Its styling follows the `seasonal-screener` dashboard.
 
-| Phase | Data | What it does |
-|---|---|---|
-| 1. Discovery | 2003-01-02 … 2022-12-30 (5,035 days) | Tests 120 pre-declared calendar windows + 12 months against normal drift, with FDR and permutation corrections, then **freezes** all 132 rules |
-| 2. Out-of-sample validation | 2023-01-03 … 2026-10-02 (941 days) | Applies the frozen rules unchanged, using criteria hash-locked **before** the new data was loaded |
+**This folder is presentation only.** It reads the research files and never changes them. Every monthly return it shows is recomputed from the price files and checked against the frozen research outputs; if anything disagrees, the build stops.
 
-## Results in brief
+## How to open it
 
-- **In-sample:** no window or month survived multiple-testing correction (best FDR q = 0.64). 8 windows showed nominal (Moderate) evidence and were frozen as the primary hypotheses.
-- **Out-of-sample:** the 8 primaries scored 4 Supportive, 1 Partially Supportive, 3 Inconclusive, 0 Contradicted. As a group, though, the bullish windows did **not** beat randomly timed windows in the same period (placebo p = 0.36), and the drawdown windows did not flag unusual downside.
-- **Best-supported:** Apr 16 → Apr 29 (10 trading days) and mid-November (Nov 16 + 15/30 td). With only 3–4 years each, this is evidence, not proof.
+Double-click **`dashboard/index.html`**. It opens in any modern browser and needs no internet, server or installation. Everything (styles, scripts, data) is inside that one file.
 
-## Reports
+## Sections
 
-Download and open in a browser:
-- `docs/phase1_report.html`: discovery study, charts, heatmap, frozen rules
-- `docs/phase2_oos_report.html`: out-of-sample scorecard, year-by-year results, integrity statement
-
-Chart images are in `outputs/charts/` (Phase 1) and `phase2/outputs/charts/` (Phase 2).
-
-## Dashboard (plain-English view)
-
-Open **`dashboard/index.html`** in a browser. It is one self-contained file that needs no installation or internet. It explains the whole study for a non-specialist: the executive summary, heat maps for 2003–2022 and for 2023–2026 (incomplete months clearly marked), a then-vs-now comparison, the rule check, a statistical review and a glossary with in-place explanations. See `dashboard/README.md` for details and `sensitivity/SENSITIVITY.md` for the separate sensitivity review.
-
-### Original research vs presentation-only files
-
-| Original research (frozen; not modified by the dashboard work) | Presentation and review additions |
+| Section | What you'll find |
 |---|---|
-| `config.yaml`, `data_handler.py`, `test_data_handler.py`, `analysis.py`, `build_outputs.py`, `make_report.py`, `data/`, `outputs/`, `seasonal_patterns_2003_2022.json` (+ `.sha256`), `report.html`, `docs/`, everything in `phase2/` | `dashboard/` (presentation only) and `sensitivity/` (separate checks that read the research files and write only into their own folder) |
+| **Summary** | Five plain-English answers, each tagged as *historical observation*, *supported*, *inconclusive*, *no reliable advantage* or *reversed* |
+| **2003–2022** | Monthly averages (switchable to 2023–26 or side by side), a sortable month scorecard, and the 8 strongest historical windows |
+| **Heat map: history** | Every month 2003–2022, with year totals and monthly averages, plus "How to read this heat map" |
+| **Heat map: 2023–26** | Same scale for the newer data. October 2026 is marked *In progress* and gets no monthly return. Includes "What changed?" |
+| **Then vs now** | Side-by-side metrics, which monthly tendencies persisted, and typical-year path charts |
+| **Rule check** | The 8 frozen hypotheses in their original order, each year's result, and a searchable table of all 132 rules |
+| **Statistical review** | The new sensitivity checks (see `../sensitivity/`), shown next to the original results |
+| **Glossary** | 32 terms (meaning, why it matters, example) and 9 formulas (symbols, worked example, limitations) |
 
-## Layout
+The small **ⓘ** buttons explain a term in place: hover or click on a computer, tap on a phone, and press Esc to close. Click a table heading to sort, and click a row in the rule check to expand it.
+
+## How the heat maps are calculated
+
+`monthly return = close on the month's last trading day ÷ close on the previous month's last trading day − 1`
+
+The first month of each price file (January 2003, January 2023) starts from that day's open, because the file contains no earlier close. This is the same rule the frozen research used.
+
+A month counts as complete only if its last calendar day is on or before the last price date (2026-10-02). Incomplete months show *In progress* and are left out of every average and comparison. Year totals multiply the completed months together. For 2026 the total is labelled "Jan–Sep", not a full year.
+
+Colors: teal means a gain and red a loss. Intensity grows with size up to ±8%, and anything between −0.5% and +0.5% is grey.
+
+## Regenerating
 
 ```
-config.yaml                       Phase-1 parameters (data hash pinned)
-data_handler.py                   point-in-time data handler; raises on any post-cutoff bar
-test_data_handler.py              11 look-ahead / cutoff tests
-analysis.py, build_outputs.py,    Phase-1 statistics, charts, frozen JSON, report
-  make_report.py
-seasonal_patterns_2003_2022.json  FROZEN rules (sha256 in .sha256 file)
-outputs/                          Phase-1 tables and chart PNGs
-data/GSPC_2003_2022.csv           Phase-1 prices (Yahoo Finance, unadjusted)
-phase2/                           out-of-sample validation: locked criteria, data, tests, outputs
-docs/                             both HTML reports
-dashboard/                        plain-English dashboard (presentation only)
-sensitivity/                      separate sensitivity review (2026-10-13)
+python sensitivity/run_sensitivity.py      # optional: refresh the sensitivity results
+python scripts/fetch_recent_prices.py      # optional: refresh the unlocked "recent" extension (see below)
+python dashboard/build_dashboard.py        # rebuilds dashboard/index.html and dashboard_data.json
+python dashboard/tests/ui_test.py          # optional browser test (needs Playwright)
 ```
 
-## Reproduce
+You need Python 3 with pandas, numpy, scipy and pyyaml (already required by the research). Colors are set in `dashboard/config.yaml`, mirroring the screener's `dashboard.colors`.
 
-```
-python test_data_handler.py && python analysis.py && python build_outputs.py && python make_report.py
-cd phase2 && python test_oos.py && python validate.py && python make_outputs.py && python make_report.py
-```
+## The "recent" extension (unlocked, informal)
 
-Requires Python 3 with pandas, numpy, scipy, matplotlib and pyyaml.
+The formal out-of-sample validation is a frozen, pre-registered, one-shot test as of
+`hard_stop = 2026-10-02` (see `../phase2/oos_validation_criteria.yaml` and
+`../phase2/preregistration.lock`) and is never re-run or re-locked — that is the whole point
+of pre-registration. But the dashboard can still show what's happened *since* that date, clearly
+separated from the locked result:
 
-Returns are price-only and exclude dividends, transaction costs, slippage and taxes. This is research, not investment advice.
+- `scripts/fetch_recent_prices.py` downloads a fresh `^GSPC` series (2023-01-01 .. today, same
+  Yahoo Finance chart API v8 source as Phase 2) to `phase2/data/extended/GSPC_2023_present.csv`.
+  This file is **not** part of the locked research: it's not hashed, not referenced by
+  `preregistration.lock`, and deleting it has zero effect on the formal validation.
+- `build_data.py` reads that file, if present, and adds any calendar month *after* the one
+  `hard_stop` falls in to the 2023–2026 heat map, marked with a dashed outline and excluded from
+  every statistic, p-value and verdict on the page (see the legend and the note above that heat
+  map). The month containing `hard_stop` itself (October 2026) always stays exactly as the locked
+  data shows it, in progress — the recent extension never overrides it.
+- `.github/workflows/monthly-dashboard-refresh.yml` runs both steps once a month and commits the
+  result, so the dashboard's informal "since the lock" picture stays current without anyone
+  needing to re-open the formal validation.
+
+## Files
+
+| File | Role |
+|---|---|
+| `build_data.py` | Computes every dashboard number from the research files and cross-checks it (presentation only) |
+| `build_dashboard.py` | Fills the template and writes `index.html` |
+| `src/template.html`, `src/styles.css`, `src/app.js` | Page structure, styling and interactive charts and tables (no external libraries) |
+| `content/glossary.json` | Glossary terms and formula explanations |
+| `config.yaml` | Colors and output path |
+| `index.html` | **The dashboard** (generated) |
+| `dashboard_data.json` | The exact numbers embedded in the page, for inspection (generated) |
+| `tests/ui_test.py` | Browser checks: page errors, tooltips, sorting, toggles, phone layout |
+| `../scripts/fetch_recent_prices.py` | Refreshes the unlocked "recent" extension (see above) |
+| `../.github/workflows/monthly-dashboard-refresh.yml` | Runs the above monthly and commits the result |
