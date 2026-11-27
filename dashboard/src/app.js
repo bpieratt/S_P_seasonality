@@ -193,6 +193,7 @@ function heatTable(el, grid, avgs, label, ns) {
     h += `<tr><th class="rowh" scope="row">${row.year}</th>`;
     row.cells.forEach((c, i) => {
       if (c.state === "complete") h += `<td style="${heatStyle(c.ret)}" data-t="<b>${MON[i]} ${row.year}</b><br>Return ${pctPlain(c.ret)}<br>Deepest dip in month ${pctPlain(c.mdd)}">${pctPlain(c.ret, 1)}</td>`;
+      else if (c.state === "recent") h += `<td class="recent" style="${heatStyle(c.ret)}" data-t="<b>${MON[i]} ${row.year}: recent, unlocked</b><br>Return ${pctPlain(c.ret)}<br>Deepest dip in month ${pctPlain(c.mdd)}<br><i>After the locked validation date — descriptive only, excluded from every statistic on this page.</i>">${pctPlain(c.ret, 1)}</td>`;
       else if (c.state === "partial") h += `<td class="partial" data-t="<b>${MON[i]} ${row.year}: in progress</b><br>Data runs only through ${c.through}.<br>No monthly return is calculated.">In progress</td>`;
       else h += `<td class="future" data-t="<b>${MON[i]} ${row.year}</b><br>Not yet happened">—</td>`;
     });
@@ -211,7 +212,18 @@ function heatLegend(el) {
   el.innerHTML = `<span>Monthly return:</span><span class="legend-scale">${bins.map(b => `<span style="${heatStyle(b === 0 ? 0 : b)}">${b === 0 ? "≈0" : (b > 0 ? "+" : "−") + Math.abs(b * 100) + "%"}${Math.abs(b) === CAP ? (b > 0 ? "+" : "") : ""}</span>`).join("")}</span>
     <span><span class="swatch" style="background:var(--heat-zero)"></span>between −0.5% and +0.5%</span>
     <span><span class="swatch" style="background:repeating-linear-gradient(135deg, rgba(245,182,66,0.3) 0 4px, rgba(245,182,66,0.08) 4px 8px);outline:1px dashed #6b5424"></span>In progress (excluded)</span>
+    <span><span class="swatch recent-swatch" style="background:var(--heat-zero);outline:2px dashed var(--highlight)"></span>Recent, after the lock (informal — excluded from every statistic)</span>
     <span><span class="swatch" style="outline:1px dashed var(--border)"></span>Not yet happened</span>`;
+}
+function recentDataNote() {
+  const m = DATA.meta;
+  if (!m.recent_available) return;
+  const panel = document.querySelector("#heat-new .panel-h .desc");
+  if (!panel) return;
+  panel.insertAdjacentHTML("beforeend",
+    ` <b>Updated since the lock:</b> months through ${m.oos_last_recent} are also shown (dashed outline), refreshed monthly. ` +
+    `They are not part of the locked validation above and are never used in any statistic, p-value or verdict on this page — ` +
+    `shown for interest only, the same way the "In progress" cell was before it completed.`);
 }
 
 /* ================================================================ C2. day-by-day calendar heat map */
@@ -444,6 +456,6 @@ function toggles() {
 monthsChart("hist"); monthTables(); windowsHist();
 heatTable($("#heat-hist-tbl"), DATA.heat.is_, DATA.heat.is_month_avg, "Each month: last close ÷ previous month's last close − 1. January 2003 starts from the Jan 2 open.");
 heatTable($("#heat-new-tbl"), DATA.heat.oos, DATA.heat.oos_month_avg, "Same calculation. January 2023 starts from the Jan 3 open, as the frozen study did. Averages use completed months only.", DATA.heat.oos_month_n);
-heatLegend($("#heat-legend-1")); heatLegend($("#heat-legend-2")); calendarHeat();
+heatLegend($("#heat-legend-1")); heatLegend($("#heat-legend-2")); recentDataNote(); calendarHeat();
 compareTables(); pathChart("both"); primaries(); isoosChart(); yearsChart(); allRules(); review(); glossary(); toggles();
 })();

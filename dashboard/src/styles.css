@@ -134,6 +134,7 @@ table.heat tr.avg td { background: transparent; border-top: 1px solid var(--bord
 table.heat tr.avg th { border-top: 1px solid var(--border); }
 table.heat td.partial { background: repeating-linear-gradient(135deg, rgba(245,182,66,0.18) 0 6px, rgba(245,182,66,0.06) 6px 12px); color: var(--highlight); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.02em; outline: 1px dashed #6b5424; }
 table.heat td.future { background: transparent; color: var(--neutral); font-weight: 400; font-size: 11px; outline: 1px dashed var(--border); }
+table.heat td.recent { outline: 2px dashed var(--highlight); outline-offset: -2px; }
 .legend-row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 12px; color: var(--text-dim); margin-top: 10px; }
 .legend-scale { display: inline-flex; flex-wrap: wrap; gap: 2px; align-items: center; }
 .legend-scale span { display: inline-block; min-width: 44px; padding: 3px 4px; border-radius: 3px; text-align: center; font-size: 10.5px; font-weight: 700; }
