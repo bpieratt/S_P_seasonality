@@ -38,6 +38,9 @@ a { color: var(--accent); }
 .header .subtitle { color: var(--text-dim); font-size: 13px; max-width: 70ch; }
 .status-pill { display: inline-block; padding: 4px 12px; border-radius: 999px; font-weight: 600; font-size: 12px; letter-spacing: 0.03em; text-transform: uppercase; border: 1px solid; white-space: nowrap; }
 .pill-research { background: rgba(245,182,66,0.12); color: var(--highlight); border-color: #6b5424; }
+.header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.last-updated { font-size: 11.5px; color: var(--text-dim); white-space: nowrap; }
+.last-updated .dim { opacity: 0.8; }
 .run-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 18px; }
 .meta-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; min-width: 0; }
 .meta-card .label { color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -190,6 +193,8 @@ footer code { font-size: 11px; overflow-wrap: anywhere; }
   table.data { font-size: 11.5px; }
   .meta-card .value { font-size: 16px; }
   .panel-b, .panel-h { padding-inline: 12px; }
+  .header-right { align-items: flex-start; width: 100%; }
+  .last-updated { white-space: normal; }
 }
 @media print {
   body { background: #fff; color: #000; }
