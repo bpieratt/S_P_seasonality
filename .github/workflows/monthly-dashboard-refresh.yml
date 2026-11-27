@@ -20,10 +20,10 @@ name: Monthly Dashboard Refresh
 
 on:
   schedule:
-    # 06:00 UTC on the 3rd of each month - comfortably after month-end data
+    # 06:00 UTC on the 5th of each month - comfortably after month-end data
     # settles, matching the "err late rather than early" convention used by
     # the sibling seasonal-screener repo's weekly workflow.
-    - cron: "0 6 3 * *"
+    - cron: "0 6 5 * *"
   # Manual trigger for an ad-hoc refresh (e.g. right after you've added a
   # month's worth of trading days and want the dashboard updated now, rather
   # than waiting for the next scheduled run).
@@ -53,7 +53,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install pandas numpy pyyaml
+        run: pip install pandas numpy pyyaml scipy
 
       - name: Fetch recent (unlocked) price data
         run: python scripts/fetch_recent_prices.py
