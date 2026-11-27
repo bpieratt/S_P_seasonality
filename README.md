@@ -10,7 +10,7 @@ A two-phase study of whether the S&P 500 (^GSPC) shows recurring calendar season
 ## Results in brief
 
 - **In-sample:** no window or month survived multiple-testing correction (best FDR q = 0.64). 8 windows showed nominal (Moderate) evidence and were frozen as the primary hypotheses.
-- **Out-of-sample:** v‡¸ 8 primaries scored 4 Supportive, 1 Partially Supportive, 3 Inconclusive, 0 Contradicted. As a group, though, the bullish windows did **not** beat randomly timed windows in the same period (placebo p = 0.36), and the drawdown windows did not flag unusual downside.
+- **Out-of-sample:** the 8 primaries scored 4 Supportive, 1 Partially Supportive, 3 Inconclusive, 0 Contradicted. As a group, though, the bullish windows did **not** beat randomly timed windows in the same period (placebo p = 0.36), and the drawdown windows did not flag unusual downside.
 - **Best-supported:** Apr 16 â†’ Apr 29 (10 trading days) and mid-November (Nov 16 + 15/30 td). With only 3â€“4 years each, this is evidence, not proof.
 
 ## Reports
