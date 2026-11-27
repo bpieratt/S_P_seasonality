@@ -19,7 +19,36 @@ import pandas as pd
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P = lambda *a: os.path.join(ROOT, *a)
 MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-OOS_LAST = "2026-10-02"
+OOS_LAST = "2026-10-02"  # the locked, pre-registered hard_stop — NEVER move this. Every number that
+                         # feeds the formal validation (primaries, rules, aggregate tests, consistency,
+                         # the 2023-26 summary stats) is computed only from data up to this date.
+
+# Optional, unlocked "recent" extension. If present, this file's rows AFTER OOS_LAST are shown in the
+# heat map purely for descriptive interest (clearly marked, excluded from every statistic above). It is
+# refreshed monthly by scripts/fetch_recent.py; the locked data/phase2 files are never touched by it.
+RECENT_PATH = P("phase2", "data", "extended", "GSPC_2023_present.csv")
+
+
+def load_recent_months(hard_stop):
+    """Monthly rows strictly after `hard_stop`, from the unlocked recent-extension file (if any).
+
+    Returns an empty, correctly-columned DataFrame when the file doesn't exist yet (first run before
+    scripts/fetch_recent.py has ever been run) — the dashboard still builds fine without it."""
+    cols = ["year", "month", "ret", "mdd", "last_date", "days", "complete", "recent"]
+    if not os.path.exists(RECENT_PATH):
+        return pd.DataFrame(columns=cols)
+    ext_px = _load(RECENT_PATH, "2023-01-01", "2100-01-01")
+    ext_m = monthly_table(ext_px)
+    last_bar = ext_px.Date.max()
+    ext_m["complete"] = ext_m.apply(lambda r: (pd.Period(f"{r.year}-{r.month:02d}").end_time.normalize()
+                                               <= last_bar), axis=1)
+    # Exclude the calendar month hard_stop itself falls in (already represented, possibly as
+    # "partial", by the locked oos_m table) so each (year, month) appears exactly once in the
+    # merged display table — never a duplicate locked+recent pair for the same month.
+    hs_period = pd.Timestamp(hard_stop).to_period("M")
+    after = ext_m[ext_m.apply(lambda r: pd.Period(f"{r.year}-{r.month:02d}") > hs_period, axis=1)].copy()
+    after["recent"] = True
+    return after.reset_index(drop=True)
 
 
 def _load(path, lo, hi):
@@ -82,6 +111,8 @@ def build():
                     cells.append(dict(state="future"))
                 elif not bool(hit.complete.iloc[0]):
                     cells.append(dict(state="partial", through=hit.last_date.iloc[0]))
+                elif bool(hit["recent"].iloc[0]) if "recent" in hit else False:
+                    cells.append(dict(state="recent", ret=round(float(hit.ret.iloc[0]), 6), mdd=round(float(hit.mdd.iloc[0]), 6)))
                 else:
                     cells.append(dict(state="complete", ret=round(float(hit.ret.iloc[0]), 6), mdd=round(float(hit.mdd.iloc[0]), 6)))
             done = mt[(mt.year == y) & mt.complete]
@@ -89,8 +120,15 @@ def build():
             out.append(dict(year=y, cells=cells, year_ret=yr, months_in_year=int(len(done)), full_year=len(done) == 12))
         return out
 
-    is_grid = grid(is_m, range(2003, 2023))
-    oos_grid = grid(oos_m, range(2023, 2027))
+    # oos_m / oos_c (below) stay EXACTLY as before — every locked statistic (primaries, rules,
+    # aggregate tests, consistency, the 2023-26 summary) is still computed only from oos_m, which is
+    # still read only from the locked, hash-checked phase2/data/GSPC_2023_2026-10-02.csv.
+    is_grid = grid(is_m.assign(recent=False), range(2003, 2023))
+    oos_m["recent"] = False
+    recent_m = load_recent_months(OOS_LAST)
+    oos_disp = pd.concat([oos_m, recent_m], ignore_index=True, sort=False) if len(recent_m) else oos_m
+    disp_max_year = int(oos_disp.year.max()) if len(oos_disp) else 2026
+    oos_grid = grid(oos_disp, range(2023, disp_max_year + 1))
     is_c, oos_c = is_m, oos_m[oos_m.complete]
 
     def per_month(mt):
@@ -197,7 +235,10 @@ def build():
         meta=dict(is_first=str(is_px.Date.min().date()), is_last=str(is_px.Date.max().date()), is_days=len(is_px),
                   oos_first=str(oos_px.Date.min().date()), oos_last=str(oos_px.Date.max().date()), oos_days=len(oos_px),
                   frozen_sha=val["frozen_rules_sha256"], criteria_sha=val["criteria_sha256"],
-                  oos_months_complete=int(len(oos_c)), oos_months_partial=int((~oos_m.complete).sum())),
+                  oos_months_complete=int(len(oos_c)), oos_months_partial=int((~oos_m.complete).sum()),
+                  recent_available=bool(len(recent_m)),
+                  oos_last_recent=str(recent_m.last_date.iloc[-1]) if len(recent_m) else None,
+                  recent_months_complete=int(recent_m.complete.sum()) if len(recent_m) else 0),
         heat=dict(is_=is_grid, oos=oos_grid,
                   is_month_avg=[r["avg"] for r in is_pm], oos_month_avg=[r["avg"] for r in oos_pm],
                   oos_month_n=[r["n"] for r in oos_pm]),

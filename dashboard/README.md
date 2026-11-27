@@ -37,11 +37,33 @@ Colors: teal means a gain and red a loss. Intensity grows with size up to ±8%, 
 
 ```
 python sensitivity/run_sensitivity.py      # optional: refresh the sensitivity results
+python scripts/fetch_recent_prices.py      # optional: refresh the unlocked "recent" extension (see below)
 python dashboard/build_dashboard.py        # rebuilds dashboard/index.html and dashboard_data.json
 python dashboard/tests/ui_test.py          # optional browser test (needs Playwright)
 ```
 
 You need Python 3 with pandas, numpy, scipy and pyyaml (already required by the research). Colors are set in `dashboard/config.yaml`, mirroring the screener's `dashboard.colors`.
+
+## The "recent" extension (unlocked, informal)
+
+The formal out-of-sample validation is a frozen, pre-registered, one-shot test as of
+`hard_stop = 2026-10-02` (see `../phase2/oos_validation_criteria.yaml` and
+`../phase2/preregistration.lock`) and is never re-run or re-locked — that is the whole point
+of pre-registration. But the dashboard can still show what's happened *since* that date, clearly
+separated from the locked result:
+
+- `scripts/fetch_recent_prices.py` downloads a fresh `^GSPC` series (2023-01-01 .. today, same
+  Yahoo Finance chart API v8 source as Phase 2) to `phase2/data/extended/GSPC_2023_present.csv`.
+  This file is **not** part of the locked research: it's not hashed, not referenced by
+  `preregistration.lock`, and deleting it has zero effect on the formal validation.
+- `build_data.py` reads that file, if present, and adds any calendar month *after* the one
+  `hard_stop` falls in to the 2023–2026 heat map, marked with a dashed outline and excluded from
+  every statistic, p-value and verdict on the page (see the legend and the note above that heat
+  map). The month containing `hard_stop` itself (October 2026) always stays exactly as the locked
+  data shows it, in progress — the recent extension never overrides it.
+- `.github/workflows/monthly-dashboard-refresh.yml` runs both steps once a month and commits the
+  result, so the dashboard's informal "since the lock" picture stays current without anyone
+  needing to re-open the formal validation.
 
 ## Files
 
@@ -55,3 +77,5 @@ You need Python 3 with pandas, numpy, scipy and pyyaml (already required by the 
 | `index.html` | **The dashboard** (generated) |
 | `dashboard_data.json` | The exact numbers embedded in the page, for inspection (generated) |
 | `tests/ui_test.py` | Browser checks: page errors, tooltips, sorting, toggles, phone layout |
+| `../scripts/fetch_recent_prices.py` | Refreshes the unlocked "recent" extension (see above) |
+| `../.github/workflows/monthly-dashboard-refresh.yml` | Runs the above monthly and commits the result |
