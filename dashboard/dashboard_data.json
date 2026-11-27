@@ -12,7 +12,7 @@
   "oos_months_partial": 1,
   "recent_available": true,
   "oos_last_recent": "2026-11-27",
-  "recent_months_complete": 0
+  "recent_months_complete": 1
  },
  "heat": {
   "is_": [
@@ -1631,8 +1631,9 @@
       "mdd": -0.025285
      },
      {
-      "state": "partial",
-      "through": "2026-10-02"
+      "state": "recent",
+      "ret": -0.009341,
+      "mdd": -0.030549
      },
      {
       "state": "partial",
@@ -1642,8 +1643,8 @@
       "state": "future"
      }
     ],
-    "year_ret": 0.11774742531590077,
-    "months_in_year": 9,
+    "year_ret": 0.1073069586391473,
+    "months_in_year": 10,
     "full_year": false
    }
   ],
