@@ -42,8 +42,13 @@ def main():
     rules = data["rules"]
     c = data["compare"]
     oos_last = dt.date.fromisoformat(data["meta"]["oos_last"])
+    build_today = dt.date.today()
+    recent_through = data["meta"].get("oos_last_recent") or data["meta"]["oos_last"]
+    recent_through_date = dt.date.fromisoformat(recent_through)
     tokens = dict(
         oos_years_word="almost four", oos_last_long=f"{oos_last:%B} {oos_last.day}, {oos_last.year}",
+        build_date_long=f"{build_today:%B} {build_today.day}, {build_today.year}",
+        recent_through_long=f"{recent_through_date:%B} {recent_through_date.day}, {recent_through_date.year}",
         oos_last_short=f"{oos_last:%b} {oos_last.day}, {oos_last.year}",
         is_months=str(c["is_"]["n_months"]), is_days=f'{data["meta"]["is_days"]:,}',
         oos_months=str(c["oos"]["n_months"]), oos_days=f'{data["meta"]["oos_days"]:,}',

@@ -42,11 +42,18 @@ def load_recent_months(hard_stop):
     last_bar = ext_px.Date.max()
     ext_m["complete"] = ext_m.apply(lambda r: (pd.Period(f"{r.year}-{r.month:02d}").end_time.normalize()
                                                <= last_bar), axis=1)
-    # Exclude the calendar month hard_stop itself falls in (already represented, possibly as
-    # "partial", by the locked oos_m table) so each (year, month) appears exactly once in the
-    # merged display table — never a duplicate locked+recent pair for the same month.
+    # Months strictly after the locked hard_stop's calendar month always come from this unlocked
+    # extension. The hard_stop's OWN calendar month is normally left to the locked oos_m table
+    # (hard_stop usually falls mid-month, e.g. 2026-10-02, so oos_m only has a couple of days of
+    # it and marks it "partial") — but once this extension file has a FULL month of data covering
+    # it, we show that instead of leaving the month stuck showing "in progress" forever. Either
+    # way this stays purely descriptive: build() drops the matching locked row from the *display*
+    # merge only (see oos_disp below) and never touches oos_m / oos_c, which still feed every
+    # locked statistic exactly as before.
     hs_period = pd.Timestamp(hard_stop).to_period("M")
-    after = ext_m[ext_m.apply(lambda r: pd.Period(f"{r.year}-{r.month:02d}") > hs_period, axis=1)].copy()
+    sel = ext_m.apply(lambda r: (pd.Period(f"{r.year}-{r.month:02d}") > hs_period) or
+                                 (pd.Period(f"{r.year}-{r.month:02d}") == hs_period and bool(r.complete)), axis=1)
+    after = ext_m[sel].copy()
     after["recent"] = True
     return after.reset_index(drop=True)
 
@@ -126,7 +133,16 @@ def build():
     is_grid = grid(is_m.assign(recent=False), range(2003, 2023))
     oos_m["recent"] = False
     recent_m = load_recent_months(OOS_LAST)
-    oos_disp = pd.concat([oos_m, recent_m], ignore_index=True, sort=False) if len(recent_m) else oos_m
+    if len(recent_m):
+        # recent_m can include the hard_stop's own calendar month (now fully covered by the
+        # extension) — drop that one month's locked row from the *display* merge so it isn't
+        # shown twice (once "partial" from oos_m, once "recent" from recent_m). oos_m itself is
+        # untouched; every locked statistic above still reads oos_m / oos_c directly.
+        recent_periods = set(zip(recent_m.year, recent_m.month))
+        oos_disp = pd.concat([oos_m[~oos_m.apply(lambda r: (r.year, r.month) in recent_periods, axis=1)],
+                              recent_m], ignore_index=True, sort=False)
+    else:
+        oos_disp = oos_m
     disp_max_year = int(oos_disp.year.max()) if len(oos_disp) else 2026
     oos_grid = grid(oos_disp, range(2023, disp_max_year + 1))
     is_c, oos_c = is_m, oos_m[oos_m.complete]
