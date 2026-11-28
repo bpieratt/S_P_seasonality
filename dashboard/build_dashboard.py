@@ -19,6 +19,9 @@ from build_data import ROOT, build
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "src")
 
+FULL_MONTH = ["January", "February", "March", "April", "May", "June", "July", "August",
+              "September", "October", "November", "December"]
+
 
 def pct(v, nd=2):
     return ("+" if v > 0 else "−" if v < 0 else "") + f"{abs(v) * 100:.{nd}f}%"
@@ -28,6 +31,39 @@ def info_button(term_id, terms):
     title = terms.get(term_id, term_id)
     return (f'<button type="button" class="info" data-term="{term_id}" '
             f'aria-label="Explain: {title}" aria-expanded="false">i</button>')
+
+
+def month_words(idxs):
+    """[4, 5] -> 'April and May'; [11] -> 'November'; [] -> ''."""
+    names = [FULL_MONTH[i - 1] for i in idxs]
+    if not names:
+        return ""
+    if len(names) == 1:
+        return names[0]
+    return " and ".join(names) if len(names) == 2 else ", ".join(names[:-1]) + f", and {names[-1]}"
+
+
+def newer_period_description(data, year, recent_through_long):
+    """Describes the current year's heat-map row from its actual cell states, so this stays
+    accurate as the monthly automation moves "partial" -> "recent"/"complete" and shrinks the
+    "future" months, instead of a sentence hand-written for one point in time."""
+    row = next(y for y in data["heat"]["oos"] if y["year"] == year)
+    cells = row["cells"]
+    done = [i + 1 for i, c in enumerate(cells) if c["state"] in ("complete", "recent")]
+    partial = [i + 1 for i, c in enumerate(cells) if c["state"] == "partial"]
+    future = [i + 1 for i, c in enumerate(cells) if c["state"] == "future"]
+
+    parts = ["Same calculation, same colors and same scale as the historical heat map."]
+    if partial:
+        parts.append(f"{FULL_MONTH[partial[0] - 1]} {year} was still in progress on "
+                      f"{recent_through_long}, so it shows as <b>In progress</b> and is never "
+                      f"given a monthly return.")
+    if future:
+        parts.append(f"{month_words(future)} {year} had not started.")
+    if done:
+        parts.append(f"The {year} year column covers {FULL_MONTH[done[0] - 1]}"
+                      f"–{FULL_MONTH[done[-1] - 1]} only.")
+    return " ".join(parts)
 
 
 def main():
@@ -72,6 +108,8 @@ def main():
         frozen_sha=data["meta"]["frozen_sha"], criteria_sha=data["meta"]["criteria_sha"],
         build_date=dt.date.today().isoformat(),
         base5=pct(data["calendar_heat"]["base5"]),
+        newer_period_desc=newer_period_description(
+            data, recent_through_date.year, f"{recent_through_date:%B} {recent_through_date.day}, {recent_through_date.year}"),
     )
     css = open(os.path.join(SRC, "styles.css")).read()
     for k, v in cfg["colors"].items():
